@@ -54,7 +54,7 @@ def test():
     print("size of raw data: ", len(trainingData))
     print("size of label: ", len(traininglabel))
     print("size of vocabulary: ", len(vocabularty))
-
+    ##
 
 if __name__ == "__main__":
     test()

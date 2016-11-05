@@ -1,0 +1,10 @@
+HINT: row index is true value, column index is predicted value
+--------------------------------------------------------------
+ [0, 1]
+0[373, 127]
+1[117, 383]
+
+--------------------------------------------------------------
+Classification rate for each digit:
+The class 0: 0.746
+The class 1: 0.766
