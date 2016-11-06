@@ -3,15 +3,24 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
+'''
+File name list:
+"movie_review/rt-train.txt",4000
+"movie_review/rt-test.txt",1000
+
+"fisher_2topic/fisher_train_2topic.txt",878
+"fisher_2topic/fisher_test_2topic.txt",98
+'''
 
 def classify():
     classifier = navieBayesClassifier()
-    trainingData, trainingLabel, vocabulary = readFile("movie_review/rt-train.txt", 4000)
-    testData, testLabel, test_vocabulary = readFile("movie_review/rt-test.txt", 1000)
-
+    # trainingData, trainingLabel, vocabulary = readFile("movie_review/rt-train.txt",4000)
+    # testData, testLabel, test_vocabulary = readFile("movie_review/rt-test.txt",1000)
+    trainingData, trainingLabel, vocabulary = readFile("fisher_2topic/fisher_train_2topic.txt", 878)
+    testData, testLabel, test_vocabulary = readFile("fisher_2topic/fisher_test_2topic.txt", 98)
     # initialization for the classifier
     classifier.setSmoothing(1)
-    classifier.setMethod('b')
+    classifier.setMethod('m')
     classifier.setVocabulary(vocabulary)
     classifier.setValidLabels([0, 1])
 
@@ -21,9 +30,17 @@ def classify():
     classifier.train(trainingData, trainingLabel)
     print("Training is done!")
     prediction = classifier.classify(testData)
-    accuracy = calAccuracy(prediction, testLabel, 1000)
-    c_matrix = confusionMatrix(prediction, testLabel, 2, 1000)
-    write_c_matrix(c_matrix)
+    accuracy = calAccuracy(prediction, testLabel, 98)
+    c_matrix = confusionMatrix(prediction, testLabel, 2, 98)
+
+    # get the top 10 words with highest likelihood
+    words_class0 = classifier.topHighestConditionals(0)
+    words_class1 = classifier.topHighestConditionals(1)
+    # get the top 10 words with highest odds ratio
+    odds_class0 = classifier.odds_calculation(0, 1)
+    odds_class1 = classifier.odds_calculation(1, 0)
+
+    outputFile(c_matrix, words_class0, words_class1, odds_class0, odds_class1)
     print("-----------------------------------------------")
     print("The accuracy is: ", accuracy)
     print("Execution time is: %fs" % (time.clock() - st))
@@ -42,7 +59,7 @@ def calAccuracy(prediction, testLabel, n):
         if prediction[i] == testLabel[i]:
             count += 1
 
-    accuracy = float(count / n)
+    accuracy = float(count) / n
 
     return accuracy
 
@@ -61,12 +78,17 @@ def confusionMatrix(prediction, testLabel, n, total):
     for i in range(total):
         c_matrix[testLabel[i]][prediction[i]] += 1
 
+    for i in range(len(c_matrix)):
+        temp_sum = sum(c_matrix[i])
+        for j in range(len(c_matrix[i])):
+            c_matrix[i][j] = float(c_matrix[i][j]) / temp_sum
+
     return c_matrix
 
 
-def write_c_matrix(c_matrix):
-    f = open('movie_confusion_matrix_b.txt', 'w')
-    f.write('HINT: row index is true value, column index is predicted value\n')
+def outputFile(c_matrix, words_class0, words_class1, odds_class0, odds_class1):
+    f = open('conversation_confusion_matrix_m.txt', 'w')
+    f.write('HINT: row index is actual value, column index is predicted value\n')
     f.write('--------------------------------------------------------------\n')
     f.write(' ' + str([0, 1]) + '\n')
     for i in range(len(c_matrix)):
@@ -81,31 +103,25 @@ def write_c_matrix(c_matrix):
     f.write("Classification rate for each digit:\n")
     for i in rate_dict:
         f.write('The class ' + str(i) + ': ' + str(rate_dict[i]) + "\n")
+    # highest 10 words -> likelihood
+    f.write('--------------------------------------------------------------\n')
+    f.write("The top 10 words with the highest likelihood for class 0:\n")
+    for i in words_class0:
+        f.write(i[0] + ": " + str(i[1]) + "\n")
+    f.write("\nThe top 10 words with the highest likelihood for class 1:\n")
+    for i in words_class1:
+        f.write(i[0] + ": " + str(i[1]) + "\n")
+    # highest 10 words -> odds_ratio
+    f.write('--------------------------------------------------------------\n')
+    f.write("\nThe top 10 words with the highest odds ratio for class 0:\n")
+    for i in odds_class0:
+        f.write(i[0] + ": " + str(i[1]) + "\n")
+    f.write("\nThe top 10 words with the highest odds ratio for class 1:\n")
+    for i in odds_class1:
+        f.write(i[0] + ": " + str(i[1]) + "\n")
 
     f.close()
 
-
-def plt_cook(classifier):
-    confused_label_pairs = [(1, 8), (3, 5), (4, 9), (3, 8), (7, 9)]
-    logs = {}
-    log_ratios = {}
-    for i in confused_label_pairs:
-        l1 = i[0]
-        l2 = i[1]
-        logs[l1] = classifier.one_odds_calculation(l1)
-        logs[l2] = classifier.one_odds_calculation(l2)
-        log_ratios[i] = classifier.odds_calculation(l1, l2)
-
-    log_ratios_array = np.array(log_ratios[(3, 5)])
-    log_ratios_matrix = np.reshape(log_ratios_array, (28, 28))
-    test_case1 = np.array(logs[1])
-    test_matrix1 = np.reshape(test_case1, (28, 28))
-
-    plt.imshow(test_matrix1)
-    plt.clim(vmin=-4, vmax=2)
-    plt.colorbar()
-
-    plt.show()
 
 
 if __name__ == "__main__":

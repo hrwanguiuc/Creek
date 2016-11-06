@@ -10,18 +10,14 @@ class navieBayesClassifier:
     def setValidLabels(self, valid_labels):
         self.valid_labels = valid_labels
 
-
     def setSmoothing(self, k):
         self.k = k
-
 
     def setVocabulary(self, vocabulary):
         self.vocabulary = vocabulary
 
-
     def setMethod(self, method):
         self.method = method
-
 
     def train(self, trainingData, trainingLabel):
         if self.method == 'm':
@@ -184,8 +180,6 @@ class navieBayesClassifier:
 
         return self.ratio_log(ratio_list)
 
-
-
     def ratio_log(self, ratio_list):
         res = copy.deepcopy(ratio_list)
 
@@ -214,6 +208,7 @@ class navieBayesClassifier:
         res.reverse()
         res = res[:10]
         return res
+
 
 def test():
     pass

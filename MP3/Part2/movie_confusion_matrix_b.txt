@@ -1,10 +1,59 @@
-HINT: row index is true value, column index is predicted value
+HINT: row index is actual value, column index is predicted value
 --------------------------------------------------------------
  [0, 1]
-0[373, 127]
-1[117, 383]
+0[0.746, 0.254]
+1[0.234, 0.766]
 
 --------------------------------------------------------------
 Classification rate for each digit:
 The class 0: 0.746
 The class 1: 0.766
+--------------------------------------------------------------
+The top 10 words with the highest likelihood for class 0:
+movie: 0.018648630901569374
+film: 0.014708779302646267
+like: 0.010309278350515464
+one: 0.009061658677523147
+story: 0.005581456431807736
+much: 0.005450128045176965
+--: 0.005318799658546195
+bad: 0.005056142885284654
+time: 0.0047934861120231135
+even: 0.004596493532076958
+
+The top 10 words with the highest likelihood for class 1:
+film: 0.018517302514938605
+movie: 0.011819554796769322
+one: 0.007223061264692363
+like: 0.006500755138223127
+--: 0.0064350909449077415
+story: 0.005975441591700046
+comedy: 0.0053844638518615795
+way: 0.005187471271915424
+even: 0.005056142885284654
+good: 0.004859150305338499
+--------------------------------------------------------------
+
+The top 10 words with the highest odds ratio for class 0:
+flat: 2.70805020110221
+stale: 2.639057329615259
+dull: 2.5649493574615367
+tired: 2.4849066497880004
+plain: 2.3978952727983707
+mediocre: 2.3978952727983707
+bore: 2.302585092994046
+forced: 2.302585092994046
+poorly: 2.302585092994046
+pointless: 2.302585092994046
+
+The top 10 words with the highest odds ratio for class 1:
+disturbing: 2.639057329615259
+grief: 2.3978952727983707
+haunting: 2.3978952727983707
+refreshingly: 2.3978952727983707
+engrossing: 2.3978952727983707
+inventive: 2.302585092994046
+gem: 2.302585092994046
+gripping: 2.302585092994046
+affecting: 2.302585092994046
+polished: 2.302585092994046
