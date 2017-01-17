@@ -2,6 +2,7 @@ from movieNavieBayes import *
 import time
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sb
 
 '''
 File name list:
@@ -19,7 +20,7 @@ def classify():
     trainingData, trainingLabel, vocabulary = readFile("fisher_2topic/fisher_train_2topic.txt", 878)
     testData, testLabel, test_vocabulary = readFile("fisher_2topic/fisher_test_2topic.txt", 98)
     # initialization for the classifier
-    classifier.setSmoothing(1)
+    classifier.setSmoothing(0.1)
     classifier.setMethod('m')
     classifier.setVocabulary(vocabulary)
     classifier.setValidLabels([0, 1])
@@ -40,7 +41,8 @@ def classify():
     odds_class0 = classifier.odds_calculation(0, 1)
     odds_class1 = classifier.odds_calculation(1, 0)
 
-    outputFile(c_matrix, words_class0, words_class1, odds_class0, odds_class1)
+    # outputFile(c_matrix, words_class0, words_class1, odds_class0, odds_class1)
+    cm_plot(c_matrix)
     print("-----------------------------------------------")
     print("The accuracy is: ", accuracy)
     print("Execution time is: %fs" % (time.clock() - st))
@@ -87,7 +89,7 @@ def confusionMatrix(prediction, testLabel, n, total):
 
 
 def outputFile(c_matrix, words_class0, words_class1, odds_class0, odds_class1):
-    f = open('conversation_confusion_matrix_m.txt', 'w')
+    f = open('con_confusion_matrix_b_k1.txt', 'w')
     f.write('HINT: row index is actual value, column index is predicted value\n')
     f.write('--------------------------------------------------------------\n')
     f.write(' ' + str([0, 1]) + '\n')
@@ -123,6 +125,19 @@ def outputFile(c_matrix, words_class0, words_class1, odds_class0, odds_class1):
     f.close()
 
 
+def cm_plot(matrix):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i])):
+            matrix[i][j] = round(matrix[i][j], 2)
+
+    new_matrix = np.array(matrix)
+
+    df_cm = pd.DataFrame(new_matrix, index=[i for i in [str(x) for x in range(2)]],
+                         columns=[i for i in [str(x) for x in range(2)]])
+    fig, ax = plt.subplots(figsize=(10, 7))  # Sample figsize in inches
+    sb.heatmap(df_cm, annot=True, linewidths=.5, ax=ax)
+    # sb.heatmap(df_cm, annot=True)
+    plt.savefig("cm_topic_0928.png")
 
 if __name__ == "__main__":
     classify()

@@ -57,15 +57,16 @@ class navieBayesClassifier:
             label = trainingLabel[i]  # label is the int value 0 or 1
             for word, count in datum.items():
                 conditional[word][label] += count
-
-            total[label] += len(datum)  # total number of words in each review
+                total[label] += count
+                # total[label] += len(datum)  # total number of words in each review
 
         # smoothing
         for word in self.vocabulary:
             for label in self.valid_labels:
                 conditional[word][label] = \
-                    float(conditional[word][label] + self.k) / (total[label] + len(self.vocabulary))
+                    float(conditional[word][label] + self.k) / (total[label] + self.k * len(self.vocabulary))
 
+                conditional[word][label] = math.log(conditional[word][label])
         # normalize prior prob
         prior.normalize()
         self.prior = prior
@@ -80,8 +81,8 @@ class navieBayesClassifier:
 
             for word, count in datum.items():
                 if word in self.conditionals.keys():
-                    temp_prob = (self.conditionals[word][label]) ** (count)
-                    res_log[label] += math.log(temp_prob)
+                    temp_log = (self.conditionals[word][label]) * (count)
+                    res_log[label] += temp_log
 
         return res_log
 
@@ -89,11 +90,12 @@ class navieBayesClassifier:
 
         prior = Counter()  # prior count: class = 0,1
         conditional = {}  # likelihood
-        total = len(trainingLabel)  # total number of reviews
+        total = {0: 0, 1: 0}  # total number of reviews
         for word in self.vocabulary:
-            conditional[word] = {0: Counter(), 1: Counter()}  # {label:appearance}
+            conditional[word] = {0: Counter(), 1: Counter()}  # {appearance:label}
         for label in trainingLabel:
             prior[label] += 1
+            total[label] += 1
 
         for i in range(len(trainingData)):
 
@@ -103,14 +105,19 @@ class navieBayesClassifier:
 
             label = trainingLabel[i]  # label is the int value 0 or 1
             for word, count in datum.items():
-                conditional[word][label][1] += 1
+                conditional[word][1][label] += 1
 
         # smoothing
+
         for word in self.vocabulary:
             for label in self.valid_labels:
-                conditional[word][label][1] = \
-                    float(conditional[word][label][1] + self.k) / (total + len(self.vocabulary))
-                conditional[word][label][0] = 1 - conditional[word][label][1]
+                conditional[word][1][label] = \
+                    float(conditional[word][1][label] + self.k) / (total[label] + self.k * 2)  # len(self.vocabulary))
+                conditional[word][0][label] = 1 - conditional[word][1][label]
+
+                conditional[word][1][label] = math.log(conditional[word][1][label])
+                conditional[word][0][label] = math.log(conditional[word][0][label])
+
 
         # normalize prior prob
         prior.normalize()
@@ -126,11 +133,11 @@ class navieBayesClassifier:
 
             for word in self.vocabulary:
                 if word in datum.keys():
-                    temp_prob = (self.conditionals[word][label][1])
+                    temp_log = (self.conditionals[word][1][label])
                 else:
-                    temp_prob = (self.conditionals[word][label][0])
+                    temp_log = (self.conditionals[word][0][label])
 
-                res_log[label] += math.log(temp_prob)
+                res_log[label] += temp_log
 
         return res_log
 
@@ -171,15 +178,15 @@ class navieBayesClassifier:
                 p1 = self.conditionals[word][l1]
                 p2 = self.conditionals[word][l2]
 
-                ratio = p1 / p2
+                ratio = p1 - p2
                 ratio_list.append((word, ratio))  # A tuple (word,ratio)
 
         elif self.method == 'b':
             for word in self.vocabulary:
-                p1 = self.conditionals[word][l1][1]
-                p2 = self.conditionals[word][l2][1]
+                p1 = self.conditionals[word][1][l1]
+                p2 = self.conditionals[word][1][l2]
 
-                ratio = p1 / p2
+                ratio = p1 - p2
                 ratio_list.append((word, ratio))  # A tuple (word,ratio)
 
         return self.ratio_log(ratio_list)
@@ -189,8 +196,8 @@ class navieBayesClassifier:
     def ratio_log(self, ratio_list):
         res = copy.deepcopy(ratio_list)
 
-        for i in range(len(res)):
-            res[i] = (res[i][0], math.log(res[i][1]))  # A tuple (word,log_ratio)
+        # for i in range(len(res)):
+        #    res[i] = (res[i][0], math.log(res[i][1]))  # A tuple (word,log_ratio)
 
         res = sorted(res, key=lambda x: x[1])
         res.reverse()
@@ -208,7 +215,7 @@ class navieBayesClassifier:
         elif self.method == 'b':
             temp = []
             for word in self.vocabulary:
-                temp.append((word, self.conditionals[word][label][1]))
+                temp.append((word, self.conditionals[word][1][label]))
             res = sorted(temp, key=lambda x: x[1])
 
         res.reverse()

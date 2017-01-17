@@ -88,11 +88,13 @@ class navieBayesClassifier2:
         '''
         res = [] # list of result
         self.posteriors = []
+        n = 0
         for datum in testData:
             posterior = self.calculateLogJointProbabilities(datum)
             self.posteriors.append(posterior) # add all of the posteriors for one datum into the list
             res.append(posterior.argMax())
-
+            print("n: ", n)
+            n += 1
         return res
 
     ##################################################

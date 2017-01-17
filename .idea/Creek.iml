@@ -2,7 +2,10 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/MP3/Part2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MP3/Part2/part2.2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MP4" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MP4/part2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/MP4/Part1" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
