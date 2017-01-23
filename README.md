@@ -1,2 +1,2 @@
 # Creek
-Work for the first semester
+Work for the Artificial Intelligence course, 1st semester
