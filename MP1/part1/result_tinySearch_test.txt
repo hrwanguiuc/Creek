@@ -1,0 +1,11 @@
+%%%%%%%%%
+%.  %.. %
+% % %%% %
+% % .  .%
+% %%0%% %
+%. 21  .%
+% %3%%%%%
+%. 4567.%
+%%%%%%8%%
+The total number of dots in the path is: 13
+The number of expanded nodes is: 530
