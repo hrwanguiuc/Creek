@@ -1,0 +1,15 @@
+V,(0, 7),marveling
+V,(1, 1),outraged
+H,(1, 0),confuse
+V,(2, 0),seminar
+H,(0, 0),lighten
+H,(2, 1),upwind
+V,(3, 3),nimbly
+V,(0, 8),python
+H,(3, 1),tundra
+V,(4, 2),folks
+V,(5, 5),hump
+V,(5, 8),neck
+V,(5, 6),pout
+H,(4, 3),icky
+V,(5, 4),save
